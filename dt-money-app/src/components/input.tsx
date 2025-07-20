@@ -17,6 +17,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useRef, useState } from 'react'
 
 import clsx from 'clsx'
+import { ErrorMessage } from './error-message'
 
 interface InputParams<T extends FieldValues> extends TextInputProps {
   control: Control<T>
@@ -48,7 +49,7 @@ export function Input<T extends FieldValues>({
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="mt-4 w-full">
           {label && (
             <Text
@@ -61,7 +62,7 @@ export function Input<T extends FieldValues>({
             </Text>
           )}
 
-          <TouchableOpacity className="h-16 flex-row items-center justify-between border-gray-600 border-b px-3 py-3">
+          <TouchableOpacity className="h-18 flex-row items-center justify-between border-gray-600 border-b px-3 py-3">
             {leftIconName && (
               <MaterialIcons
                 className="mr-2"
@@ -93,6 +94,8 @@ export function Input<T extends FieldValues>({
               </TouchableOpacity>
             )}
           </TouchableOpacity>
+
+          {error && <ErrorMessage>{error.message}</ErrorMessage>}
         </View>
       )}
     />

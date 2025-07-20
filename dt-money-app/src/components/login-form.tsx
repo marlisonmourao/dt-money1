@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Link } from 'expo-router'
 import { Text, View } from 'react-native'
 import { Button } from './button'
 import { Input } from './input'
@@ -20,7 +21,13 @@ export function SignInForm() {
     formState: { isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   })
+
+  function handleSignIn(data: LoginFormData) {}
 
   return (
     <View>
@@ -42,16 +49,24 @@ export function SignInForm() {
       />
 
       <View className="mt-8 mb-6 min-h-[250px] w-full flex-1 justify-between">
-        <Button iconName="arrow-forward">Login</Button>
+        <Button
+          disabled={isSubmitting}
+          iconName="arrow-forward"
+          onPress={handleSubmit(handleSignIn)}
+        >
+          Login
+        </Button>
 
         <View>
           <Text className="mb-6 text-balance text-gray-300">
             Ainda não possui uma conta ?
           </Text>
 
-          <Button iconName="arrow-forward" mode="outline">
-            Cadastrar
-          </Button>
+          <Link asChild href="/register">
+            <Button iconName="arrow-forward" mode="outline">
+              Cadastrar
+            </Button>
+          </Link>
         </View>
       </View>
     </View>
