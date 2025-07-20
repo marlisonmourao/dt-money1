@@ -12,7 +12,7 @@ const loginFormSchema = z.object({
   password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
 })
 
-type LoginFormData = z.infer<typeof loginFormSchema>
+export type LoginFormData = z.infer<typeof loginFormSchema>
 
 export function SignInForm() {
   const {
