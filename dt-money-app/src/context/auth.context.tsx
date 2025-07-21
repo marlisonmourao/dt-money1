@@ -27,14 +27,18 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
   async function handleAuthenticate(params: LoginFormData) {
     const { user: userData, token: tokenData } =
-      await authService.Authenticate(params)
+      await authService.authenticate(params)
 
     setUser(userData)
     setToken(tokenData)
   }
 
   async function handleRegister(params: RegisterFormData) {
-    console.log(params)
+    const { user: userData, token: tokenData } =
+      await authService.registerUser(params)
+
+    setUser(userData)
+    setToken(tokenData)
   }
 
   function handleLogout() {

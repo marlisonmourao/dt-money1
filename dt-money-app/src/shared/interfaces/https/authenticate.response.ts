@@ -1,6 +1,6 @@
-import type { User } from './user-interface'
+import type { IUser } from './user-interface'
 
-export interface AuthenticateResponse {
-  user: User
+export interface IAuthenticateResponse {
+  user: IUser
   token: string
 }

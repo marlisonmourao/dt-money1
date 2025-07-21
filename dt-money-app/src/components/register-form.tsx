@@ -1,7 +1,10 @@
+import { AuthContext } from '@/context/auth.context'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'expo-router'
+import { AxiosError } from 'axios'
+import { Link, Redirect } from 'expo-router'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { Text, View } from 'react-native'
+import { Alert, Text, View } from 'react-native'
 import z from 'zod'
 import { Button } from './button'
 import { Input } from './input'
@@ -23,6 +26,8 @@ const registerFormSchema = z
 export type RegisterFormData = z.infer<typeof registerFormSchema>
 
 export function RegisterForm() {
+  const { handleRegister, user } = useContext(AuthContext)
+
   const {
     control,
     handleSubmit,
@@ -37,7 +42,19 @@ export function RegisterForm() {
     },
   })
 
-  function handleRegister(data: RegisterFormData) {}
+  async function register(data: RegisterFormData) {
+    try {
+      await handleRegister(data)
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        Alert.alert('Erro', error.response?.data.message)
+      }
+    }
+  }
+
+  if (user?.id) {
+    return <Redirect href="/home" />
+  }
 
   return (
     <>
@@ -79,7 +96,7 @@ export function RegisterForm() {
         <Button
           disabled={isSubmitting}
           iconName="arrow-forward"
-          onPress={handleSubmit(handleRegister)}
+          onPress={handleSubmit(register)}
         >
           Cadastrar
         </Button>
