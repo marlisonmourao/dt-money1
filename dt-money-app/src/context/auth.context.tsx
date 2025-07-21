@@ -11,12 +11,16 @@ import type { IUser } from '@/shared/interfaces/https/user-interface'
 // biome-ignore lint/performance/noNamespaceImport: after
 import * as authService from '@/shared/services/dt-money/auth.service'
 
+import type { IAuthenticateResponse } from '@/shared/interfaces/https/authenticate.response'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 type AuthContextType = {
   user: IUser | null
   token: string | null
   handleAuthenticate: (params: LoginFormData) => Promise<void>
   handleRegister: (params: RegisterFormData) => Promise<void>
   handleLogout: () => void
+  restoreUserSession: () => Promise<string | null>
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -29,6 +33,8 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
     const { user: userData, token: tokenData } =
       await authService.authenticate(params)
 
+    await AsyncStorage.setItem('@dtmoney:user', JSON.stringify({ user, token }))
+
     setUser(userData)
     setToken(tokenData)
   }
@@ -36,14 +42,32 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
   async function handleRegister(params: RegisterFormData) {
     const { user: userData, token: tokenData } =
       await authService.registerUser(params)
+    await AsyncStorage.setItem('@dtmoney:user', JSON.stringify({ user, token }))
 
     setUser(userData)
     setToken(tokenData)
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    await AsyncStorage.clear()
+
     setUser(null)
     setToken(null)
+  }
+
+  async function restoreUserSession() {
+    const userData = await AsyncStorage.getItem('@dtmoney:user')
+
+    if (userData) {
+      const { user: responseUser, token: responseToken } = JSON.parse(
+        userData
+      ) as IAuthenticateResponse
+
+      setUser(responseUser)
+      setToken(responseToken)
+    }
+
+    return userData
   }
 
   return (
@@ -54,6 +78,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
         handleAuthenticate,
         handleRegister,
         handleLogout,
+        restoreUserSession,
       }}
     >
       {children}
