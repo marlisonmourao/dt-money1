@@ -1,7 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { useAuthContext } from '@/context/auth.context'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AxiosError } from 'axios'
 import { Link } from 'expo-router'
 import { Text, View } from 'react-native'
 import { Button } from './button'
@@ -15,6 +17,8 @@ const loginFormSchema = z.object({
 export type LoginFormData = z.infer<typeof loginFormSchema>
 
 export function SignInForm() {
+  const { handleAuthenticate } = useAuthContext()
+
   const {
     control,
     handleSubmit,
@@ -27,7 +31,16 @@ export function SignInForm() {
     },
   })
 
-  function handleSignIn(data: LoginFormData) {}
+  async function handleSignIn(data: LoginFormData) {
+    try {
+      await handleAuthenticate(data)
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // biome-ignore lint/suspicious/noConsole: after
+        console.log(error.response?.data)
+      }
+    }
+  }
 
   return (
     <View>

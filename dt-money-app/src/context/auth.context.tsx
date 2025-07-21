@@ -1,6 +1,3 @@
-/** biome-ignore-all lint/suspicious/noConsole: after */
-/** biome-ignore-all lint/suspicious/useAwait: after */
-/** biome-ignore-all lint/correctness/noUnusedVariables: after */
 import type { LoginFormData } from '@/components/login-form'
 import type { RegisterFormData } from '@/components/register-form'
 import {
@@ -10,8 +7,12 @@ import {
   type PropsWithChildren,
 } from 'react'
 
+import type { IUser } from '@/shared/interfaces/https/user-interface'
+// biome-ignore lint/performance/noNamespaceImport: after
+import * as authService from '@/shared/services/dt-money/auth.service'
+
 type AuthContextType = {
-  user: null
+  user: IUser | null
   token: string | null
   handleAuthenticate: (params: LoginFormData) => Promise<void>
   handleRegister: (params: RegisterFormData) => Promise<void>
@@ -21,11 +22,15 @@ type AuthContextType = {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 
 export function AuthContextProvider({ children }: PropsWithChildren) {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
+  const [user, setUser] = useState<IUser | null>(null)
+  const [token, setToken] = useState<string | null>(null)
 
   async function handleAuthenticate(params: LoginFormData) {
-    console.log(params)
+    const { user: userData, token: tokenData } =
+      await authService.Authenticate(params)
+
+    setUser(userData)
+    setToken(tokenData)
   }
 
   async function handleRegister(params: RegisterFormData) {
