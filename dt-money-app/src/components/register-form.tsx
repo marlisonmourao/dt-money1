@@ -1,6 +1,6 @@
 import { AuthContext } from '@/context/auth.context'
+import { AppError } from '@/shared/helpers/app-error'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
 import { Link, Redirect } from 'expo-router'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
@@ -46,8 +46,8 @@ export function RegisterForm() {
     try {
       await handleRegister(data)
     } catch (error) {
-      if (error instanceof AxiosError) {
-        Alert.alert('Erro', error.response?.data.message)
+      if (error instanceof AppError) {
+        Alert.alert('Erro', error.message)
       }
     }
   }

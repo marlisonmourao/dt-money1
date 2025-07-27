@@ -6,7 +6,7 @@ import { useSnackbarContext } from '@/context/snack-bar.context'
 import { AppError } from '@/shared/helpers/app-error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from 'expo-router'
-import { Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 import { Button } from './button'
 import { Input } from './input'
 
@@ -28,8 +28,8 @@ export function SignInForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'john@email.com',
+      password: '123456',
     },
   })
 
@@ -71,7 +71,7 @@ export function SignInForm() {
           iconName="arrow-forward"
           onPress={handleSubmit(handleSignIn)}
         >
-          Login
+          {isSubmitting ? <ActivityIndicator color="#fff" /> : 'Login'}
         </Button>
 
         <View>

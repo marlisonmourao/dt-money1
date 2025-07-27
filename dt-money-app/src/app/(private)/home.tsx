@@ -1,22 +1,19 @@
+import { AppHeader } from '@/components/app-header'
 import { AuthContext } from '@/context/auth.context'
 import { Redirect } from 'expo-router'
 import { useContext } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Home() {
-  const { user, handleLogout } = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
 
   if (!user?.id) {
     return <Redirect href="/" />
   }
 
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text>Home</Text>
-
-      <TouchableOpacity onPress={handleLogout}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView className="flex-1 bg-background-primary">
+      <AppHeader />
+    </SafeAreaView>
   )
 }
