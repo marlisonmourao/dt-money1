@@ -17,12 +17,12 @@ export function Loading({ setIsLoading }: LoadingProps) {
     const checkUserSession = async () => {
       try {
         setIsLoading(true)
-        const user = await restoreUserSession()
+        const token = await restoreUserSession()
 
-        if (!user) {
+        if (!token) {
           await handleLogout()
         }
-      } catch (error) {
+      } catch {
         await handleLogout()
       } finally {
         setIsLoading(false)

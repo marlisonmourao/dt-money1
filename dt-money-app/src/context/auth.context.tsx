@@ -33,7 +33,10 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
     const { user: userData, token: tokenData } =
       await authService.authenticate(params)
 
-    await AsyncStorage.setItem('@dtmoney:user', JSON.stringify({ user, token }))
+    await AsyncStorage.setItem(
+      '@dtmoney:user',
+      JSON.stringify({ user: userData, token: tokenData })
+    )
 
     setUser(userData)
     setToken(tokenData)
@@ -42,7 +45,11 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
   async function handleRegister(params: RegisterFormData) {
     const { user: userData, token: tokenData } =
       await authService.registerUser(params)
-    await AsyncStorage.setItem('@dtmoney:user', JSON.stringify({ user, token }))
+
+    await AsyncStorage.setItem(
+      '@dtmoney:user',
+      JSON.stringify({ user: userData, token: tokenData })
+    )
 
     setUser(userData)
     setToken(tokenData)
@@ -56,18 +63,24 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
   }
 
   async function restoreUserSession() {
-    const userData = await AsyncStorage.getItem('@dtmoney:user')
+    try {
+      const userData = await AsyncStorage.getItem('@dtmoney:user')
 
-    if (userData) {
-      const { user: responseUser, token: responseToken } = JSON.parse(
-        userData
-      ) as IAuthenticateResponse
+      if (userData) {
+        const parsedData = JSON.parse(userData) as IAuthenticateResponse
 
-      setUser(responseUser)
-      setToken(responseToken)
+        const { user: responseUser, token: responseToken } = parsedData
+
+        setUser(responseUser)
+        setToken(responseToken)
+
+        return responseToken
+      }
+
+      return null
+    } catch {
+      return null
     }
-
-    return userData
   }
 
   return (

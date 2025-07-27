@@ -14,21 +14,21 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 export default function RootLayout() {
   const [isLoading, setIsLoading] = useState(true)
 
-  if (isLoading) {
-    return <Loading setIsLoading={setIsLoading} />
-  }
-
   return (
     <GestureHandlerRootView className="flex-1">
       <SnackbarContextProvider>
         <AuthContextProvider>
-          <BottomSheetProvider>
-            <SystemBars style="light" />
-            <View className="flex-1 bg-background-primary">
-              <Slot />
-            </View>
-            <Snackbar />
-          </BottomSheetProvider>
+          {isLoading ? (
+            <Loading setIsLoading={setIsLoading} />
+          ) : (
+            <BottomSheetProvider>
+              <SystemBars style="light" />
+              <View className="flex-1 bg-background-primary">
+                <Slot />
+              </View>
+              <Snackbar />
+            </BottomSheetProvider>
+          )}
         </AuthContextProvider>
       </SnackbarContextProvider>
     </GestureHandlerRootView>
