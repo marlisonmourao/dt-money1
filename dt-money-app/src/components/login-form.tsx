@@ -2,8 +2,9 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { useAuthContext } from '@/context/auth.context'
+import { useSnackbarContext } from '@/context/snack-bar.context'
+import { AppError } from '@/shared/helpers/app-error'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
 import { Link } from 'expo-router'
 import { Text, View } from 'react-native'
 import { Button } from './button'
@@ -18,6 +19,7 @@ export type LoginFormData = z.infer<typeof loginFormSchema>
 
 export function SignInForm() {
   const { handleAuthenticate } = useAuthContext()
+  const { notify } = useSnackbarContext()
 
   const {
     control,
@@ -35,9 +37,11 @@ export function SignInForm() {
     try {
       await handleAuthenticate(data)
     } catch (error) {
-      if (error instanceof AxiosError) {
-        // biome-ignore lint/suspicious/noConsole: after
-        console.log(error.response?.data)
+      if (error instanceof AppError) {
+        notify({
+          message: error.message,
+          type: 'ERROR',
+        })
       }
     }
   }

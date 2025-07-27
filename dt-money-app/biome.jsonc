@@ -3,6 +3,13 @@
   "extends": [
     "ultracite"
   ],
+  "linter": {
+    "rules": {
+      "nursery": {
+        "noShadow": "off"
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "lineEnding": "lf",
