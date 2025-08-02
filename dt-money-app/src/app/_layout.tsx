@@ -6,6 +6,7 @@ import { Snackbar } from '@/components/snackbar'
 import { AuthContextProvider } from '@/context/auth.context'
 import { BottomSheetProvider } from '@/context/bottom-sheet.context'
 import { SnackbarContextProvider } from '@/context/snack-bar.context'
+import { TransactionContextProvider } from '@/context/transaction.context'
 import { useState } from 'react'
 import { View } from 'react-native'
 import { SystemBars } from 'react-native-edge-to-edge'
@@ -16,21 +17,23 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView className="flex-1">
-      <SnackbarContextProvider>
-        <AuthContextProvider>
-          {isLoading ? (
-            <Loading setIsLoading={setIsLoading} />
-          ) : (
-            <BottomSheetProvider>
-              <SystemBars style="light" />
-              <View className="flex-1 bg-background-primary">
-                <Slot />
-              </View>
-              <Snackbar />
-            </BottomSheetProvider>
-          )}
-        </AuthContextProvider>
-      </SnackbarContextProvider>
+      <TransactionContextProvider>
+        <SnackbarContextProvider>
+          <AuthContextProvider>
+            {isLoading ? (
+              <Loading setIsLoading={setIsLoading} />
+            ) : (
+              <BottomSheetProvider>
+                <SystemBars style="light" />
+                <View className="flex-1 bg-background-primary">
+                  <Slot />
+                </View>
+                <Snackbar />
+              </BottomSheetProvider>
+            )}
+          </AuthContextProvider>
+        </SnackbarContextProvider>
+      </TransactionContextProvider>
     </GestureHandlerRootView>
   )
 }

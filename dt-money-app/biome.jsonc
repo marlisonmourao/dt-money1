@@ -7,6 +7,12 @@
     "rules": {
       "nursery": {
         "noShadow": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off"
       }
     }
   },

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Platform } from 'react-native'
 import { AppError } from '../helpers/app-error'
+import { addTokenRequest } from '../helpers/axios.helper'
 
 const baseURL = Platform.select({
   ios: 'http://192.168.0.5:3001',
@@ -10,6 +11,8 @@ const baseURL = Platform.select({
 const dtMoneyApi = axios.create({
   baseURL,
 })
+
+addTokenRequest(dtMoneyApi)
 
 dtMoneyApi.interceptors.response.use(
   (config) => config,
@@ -25,4 +28,3 @@ dtMoneyApi.interceptors.response.use(
 )
 
 export { dtMoneyApi }
-
