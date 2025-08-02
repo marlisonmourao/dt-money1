@@ -7,10 +7,11 @@ import {
   type PropsWithChildren,
 } from 'react'
 
-import { TouchableWithoutFeedback } from 'react-native'
-
 import { colors } from '@/styles/colors'
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
+import BottomSheet, {
+  BottomSheetScrollView,
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet'
 import { View } from 'react-native'
 
 interface BottomSheetContextType {
@@ -67,12 +68,10 @@ export function BottomSheetProvider({ children }: PropsWithChildren) {
     >
       {children}
 
-      {isOpen && content && (
-        <View className="absolute inset-0 z-[1000] bg-black/50">
-          <TouchableWithoutFeedback onPress={closeBottomSheet}>
-            <View style={{ flex: 1 }} />
-          </TouchableWithoutFeedback>
-        </View>
+      {isOpen && (
+        <TouchableWithoutFeedback onPress={closeBottomSheet}>
+          <View className="absolute inset-0 z-10 bg-black/70" />
+        </TouchableWithoutFeedback>
       )}
 
       {/* Bottom Sheet */}

@@ -3,7 +3,7 @@ import { Platform } from 'react-native'
 import { AppError } from '../helpers/app-error'
 
 const baseURL = Platform.select({
-  ios: 'http://192.168.0.1:3001',
+  ios: 'http://192.168.0.5:3001',
   android: 'http://10.0.2.2:3001',
 })
 
@@ -25,3 +25,4 @@ dtMoneyApi.interceptors.response.use(
 )
 
 export { dtMoneyApi }
+
