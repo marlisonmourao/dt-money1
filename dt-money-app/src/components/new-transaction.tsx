@@ -1,9 +1,18 @@
 import { useBottomSheetContext } from '@/context/bottom-sheet.context'
+import { useSnackbarContext } from '@/context/snack-bar.context'
+import { useTransactionContext } from '@/context/transaction.context'
+import { AppError } from '@/shared/helpers/app-error'
 import type { CreateTransactionRequest } from '@/shared/interfaces/https/create-transaction-request'
 import { colors } from '@/styles/colors'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useState } from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import CurrencyInput from 'react-native-currency-input'
 import { z, ZodError } from 'zod'
 import { Button } from './button'
@@ -24,9 +33,13 @@ type ValidationError = Partial<
 
 export const NewTransaction = () => {
   const { closeBottomSheet } = useBottomSheetContext()
+  const { createTransaction } = useTransactionContext()
+  const { notify } = useSnackbarContext()
 
   const [validationError, setValidationError] =
     useState<ValidationError | null>(null)
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [transaction, setTransaction] = useState<CreateTransactionRequest>({
     description: '',
@@ -35,10 +48,17 @@ export const NewTransaction = () => {
     categoryId: 0,
   })
 
-  function handleCreateTransaction() {
+  async function handleCreateTransaction() {
     try {
       setValidationError(null)
+      setIsSubmitting(true)
+
       transactionSchema.parse(transaction)
+
+      await createTransaction(transaction)
+
+      setIsSubmitting(false)
+      closeBottomSheet()
     } catch (error) {
       if (error instanceof ZodError) {
         const validationErrors = error.issues.reduce(
@@ -55,6 +75,18 @@ export const NewTransaction = () => {
         )
 
         setValidationError(validationErrors)
+        setIsSubmitting(false)
+
+        return
+      }
+
+      if (error instanceof AppError) {
+        notify({
+          message: error.message,
+          type: 'ERROR',
+        })
+
+        setIsSubmitting(false)
       }
     }
   }
@@ -128,8 +160,14 @@ export const NewTransaction = () => {
         )}
 
         <View className="mt-4">
-          <Button onPress={handleCreateTransaction}>
-            <Text className="text-lg text-white">Criar transação</Text>
+          <Button disabled={isSubmitting} onPress={handleCreateTransaction}>
+            <Text className="text-lg text-white">
+              {isSubmitting ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                'Criar transação'
+              )}
+            </Text>
           </Button>
         </View>
       </View>

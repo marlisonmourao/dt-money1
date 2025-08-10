@@ -6,11 +6,13 @@ import {
   type PropsWithChildren,
 } from 'react'
 
+import type { CreateTransactionRequest } from '@/shared/interfaces/https/create-transaction-request'
 import * as transactionService from '@/shared/services/dt-money/transaction.service'
 
 export type TransactionContextType = {
   fetchCategories: () => Promise<void>
   categories: TransactionCategoryResponse[]
+  createTransaction: (transaction: CreateTransactionRequest) => Promise<void>
 }
 
 export const TransactionContext = createContext<TransactionContextType>(
@@ -29,8 +31,14 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     setCategories(categoriesResponse)
   }
 
+  async function createTransaction(transaction: CreateTransactionRequest) {
+    await transactionService.createTransaction(transaction)
+  }
+
   return (
-    <TransactionContext.Provider value={{ categories, fetchCategories }}>
+    <TransactionContext.Provider
+      value={{ categories, fetchCategories, createTransaction }}
+    >
       {children}
     </TransactionContext.Provider>
   )
