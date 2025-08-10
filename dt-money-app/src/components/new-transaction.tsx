@@ -5,11 +5,28 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import CurrencyInput from 'react-native-currency-input'
+import { z, ZodError } from 'zod'
+import { Button } from './button'
+import { ErrorMessage } from './error-message'
 import { SelectCategoryModal } from './select-category-modal'
 import { TransactionTypeSelector } from './select-type'
 
+const transactionSchema = z.object({
+  description: z.string().trim().min(1, { message: 'Descrição é obrigatória' }),
+  typeId: z.number().min(1, { message: 'Tipo é obrigatório' }),
+  value: z.number().min(1, { message: 'Valor é obrigatório' }),
+  categoryId: z.number().min(1, { message: 'Categoria é obrigatória' }),
+})
+
+type ValidationError = Partial<
+  Record<keyof z.infer<typeof transactionSchema>, string>
+>
+
 export const NewTransaction = () => {
   const { closeBottomSheet } = useBottomSheetContext()
+
+  const [validationError, setValidationError] =
+    useState<ValidationError | null>(null)
 
   const [transaction, setTransaction] = useState<CreateTransactionRequest>({
     description: '',
@@ -17,6 +34,30 @@ export const NewTransaction = () => {
     value: 0,
     categoryId: 0,
   })
+
+  function handleCreateTransaction() {
+    try {
+      setValidationError(null)
+      transactionSchema.parse(transaction)
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationErrors = error.issues.reduce(
+          (acc: ValidationError, issue: z.ZodIssue) => {
+            const field = issue.path[0] as keyof z.infer<
+              typeof transactionSchema
+            >
+            if (field) {
+              acc[field] = issue.message
+            }
+            return acc
+          },
+          {} as ValidationError
+        )
+
+        setValidationError(validationErrors)
+      }
+    }
+  }
 
   const setTransactionData = (
     key: keyof CreateTransactionRequest,
@@ -46,6 +87,11 @@ export const NewTransaction = () => {
           placeholderTextColor={colors.gray[700]}
           value={transaction.description}
         />
+
+        {validationError?.description && (
+          <ErrorMessage>{validationError?.description}</ErrorMessage>
+        )}
+
         <CurrencyInput
           className="my-2 h-[50px] rounded-md bg-background-primary pl-4 text-lg text-white"
           delimiter="."
@@ -57,6 +103,10 @@ export const NewTransaction = () => {
           value={transaction.value}
         />
 
+        {validationError?.value && (
+          <ErrorMessage>{validationError?.value}</ErrorMessage>
+        )}
+
         <SelectCategoryModal
           onSelectCategory={(categoryId) =>
             setTransactionData('categoryId', categoryId)
@@ -64,10 +114,24 @@ export const NewTransaction = () => {
           selectedCategory={transaction.categoryId}
         />
 
+        {validationError?.categoryId && (
+          <ErrorMessage>{validationError?.categoryId}</ErrorMessage>
+        )}
+
         <TransactionTypeSelector
           setTransactionType={(typeId) => setTransactionData('typeId', typeId)}
           typeId={transaction.typeId}
         />
+
+        {validationError?.typeId && (
+          <ErrorMessage>{validationError?.typeId}</ErrorMessage>
+        )}
+
+        <View className="mt-4">
+          <Button onPress={handleCreateTransaction}>
+            <Text className="text-lg text-white">Criar transação</Text>
+          </Button>
+        </View>
       </View>
     </View>
   )
