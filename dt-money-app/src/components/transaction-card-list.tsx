@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import { format } from 'date-fns'
 import { Text, View } from 'react-native'
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable'
+import { LeftAction } from './left-action'
 import { RightAction } from './right-action'
 
 interface TransactionCardListProps {
@@ -24,7 +25,9 @@ export function TransactionCardList({ transaction }: TransactionCardListProps) {
         marginBottom: 16,
         paddingHorizontal: 16,
       }}
+      overshootLeft={false}
       overshootRight={false}
+      renderLeftActions={() => <LeftAction transaction={transaction} />}
       renderRightActions={() => <RightAction id={transaction.id} />}
     >
       <View className="h-[140] rounded-[6] bg-background-tertiary p-6">

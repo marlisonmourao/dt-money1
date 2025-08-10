@@ -7,6 +7,7 @@ import {
 } from 'react'
 
 import type { CreateTransactionRequest } from '@/shared/interfaces/https/create-transaction-request'
+import type { UpdateTransactionRequest } from '@/shared/interfaces/https/update-transaction-request'
 import type { TotalTransactions } from '@/shared/interfaces/total-transactions'
 import type { Transaction } from '@/shared/interfaces/transaction'
 import * as transactionService from '@/shared/services/dt-money/transaction.service'
@@ -18,6 +19,7 @@ export type TransactionContextType = {
   totalTransactions: TotalTransactions
   createTransaction: (transaction: CreateTransactionRequest) => Promise<void>
   fetchTransactions: () => Promise<void>
+  updateTransaction: (transaction: UpdateTransactionRequest) => Promise<void>
 }
 
 export const TransactionContext = createContext<TransactionContextType>(
@@ -48,6 +50,10 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     await transactionService.createTransaction(transaction)
   }
 
+  async function updateTransaction(transaction: UpdateTransactionRequest) {
+    await transactionService.updateTransaction(transaction)
+  }
+
   const fetchTransactions = async () => {
     const transactionsResponse = await transactionService.getTransactions({
       page: 1,
@@ -67,6 +73,7 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
         createTransaction,
         fetchTransactions,
         totalTransactions,
+        updateTransaction,
       }}
     >
       {children}

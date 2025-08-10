@@ -8,6 +8,7 @@ import type {
   GetTransactionResponse,
 } from '@/shared/interfaces/https/get-transactionts'
 
+import type { UpdateTransactionRequest } from '@/shared/interfaces/https/update-transaction-request'
 import qs from 'qs'
 
 export async function getTransactionCategories(): Promise<
@@ -36,4 +37,8 @@ export async function getTransactions(
 
 export async function deleteTransaction(id: number) {
   await dtMoneyApi.delete(`/transaction/${id}`)
+}
+
+export async function updateTransaction(transaction: UpdateTransactionRequest) {
+  await dtMoneyApi.put('/transaction', transaction)
 }
