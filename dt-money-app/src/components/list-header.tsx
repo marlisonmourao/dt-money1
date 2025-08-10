@@ -15,7 +15,7 @@ export function ListHeader() {
         <View className="h-[50] bg-background-primary" />
 
         <ScrollView
-          className="absolute h-[141] pl-6"
+          className="absolute h-[141]"
           horizontal
           showsHorizontalScrollIndicator={false}
         >

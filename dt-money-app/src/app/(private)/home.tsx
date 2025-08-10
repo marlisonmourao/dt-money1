@@ -1,17 +1,19 @@
 import { ListHeader } from '@/components/list-header'
+import { TransactionCardList } from '@/components/transaction-card-list'
 import { AuthContext } from '@/context/auth.context'
 import { useSnackbarContext } from '@/context/snack-bar.context'
 import { useTransactionContext } from '@/context/transaction.context'
 import { AppError } from '@/shared/helpers/app-error'
 import { Redirect } from 'expo-router'
 import { useContext, useEffect } from 'react'
-import { FlatList, View } from 'react-native'
+import { FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Home() {
   const { user } = useContext(AuthContext)
 
-  const { fetchCategories, fetchTransactions } = useTransactionContext()
+  const { fetchCategories, fetchTransactions, transactions } =
+    useTransactionContext()
   const { notify } = useSnackbarContext()
 
   async function handleFetchCategories() {
@@ -41,9 +43,10 @@ export default function Home() {
     <SafeAreaView className="flex-1 bg-background-primary">
       <FlatList
         className="bg-background-secondary"
-        data={[]}
+        data={transactions}
+        keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={ListHeader}
-        renderItem={() => <View />}
+        renderItem={({ item }) => <TransactionCardList transaction={item} />}
       />
     </SafeAreaView>
   )
