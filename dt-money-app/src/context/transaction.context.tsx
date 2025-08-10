@@ -14,6 +14,7 @@ import * as transactionService from '@/shared/services/dt-money/transaction.serv
 export type TransactionContextType = {
   fetchCategories: () => Promise<void>
   categories: TransactionCategoryResponse[]
+  transactions: Transaction[]
   totalTransactions: TotalTransactions
   createTransaction: (transaction: CreateTransactionRequest) => Promise<void>
   fetchTransactions: () => Promise<void>
@@ -60,6 +61,7 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
   return (
     <TransactionContext.Provider
       value={{
+        transactions,
         categories,
         fetchCategories,
         createTransaction,

@@ -1,8 +1,12 @@
+import { useTransactionContext } from '@/context/transaction.context'
 import { TransactionTypes } from '@/shared/enums/transaction-types'
 import { colors } from '@/styles/colors'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import { Text, View } from 'react-native'
+
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 type TransactionTypeCardProps = TransactionTypes | 'total'
 
@@ -55,6 +59,12 @@ export function TransactionCard({ type, amount }: TransactionCardProps) {
   const iconsData = ICONS[type]
   const cardData = CARD_DATA[type]
 
+  const { transactions } = useTransactionContext()
+
+  const lastTransaction = transactions.find(
+    ({ type: transactionType }) => transactionType.id === type
+  )
+
   return (
     <View
       className={`bg-${cardData.bgColor} mr-6 min-w-[260] justify-between rounded-lg px-8 py-6`}
@@ -72,6 +82,20 @@ export function TransactionCard({ type, amount }: TransactionCardProps) {
         <Text className="font-bold text-2xl text-gray-400">
           R$ {amount.toFixed(2).replace('.', ',')}
         </Text>
+
+        {type !== 'total' && (
+          <Text className="text-gray-700">
+            {lastTransaction?.createdAt
+              ? format(
+                  lastTransaction?.createdAt,
+                  `'Última ${cardData.label.toLocaleLowerCase()} em' d 'de' MMMM`,
+                  {
+                    locale: ptBR,
+                  }
+                )
+              : 'Nenhuma transação encontrada'}
+          </Text>
+        )}
       </View>
     </View>
   )
