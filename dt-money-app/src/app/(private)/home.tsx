@@ -6,14 +6,19 @@ import { useTransactionContext } from '@/context/transaction.context'
 import { AppError } from '@/shared/helpers/app-error'
 import { Redirect } from 'expo-router'
 import { useContext, useEffect } from 'react'
-import { FlatList } from 'react-native'
+import { FlatList, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Home() {
   const { user } = useContext(AuthContext)
 
-  const { fetchCategories, fetchTransactions, transactions } =
-    useTransactionContext()
+  const {
+    fetchCategories,
+    fetchTransactions,
+    transactions,
+    refreshTransactions,
+    refreshing,
+  } = useTransactionContext()
   const { notify } = useSnackbarContext()
 
   async function handleFetchCategories() {
@@ -46,6 +51,12 @@ export default function Home() {
         data={transactions}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={ListHeader}
+        refreshControl={
+          <RefreshControl
+            onRefresh={refreshTransactions}
+            refreshing={refreshing}
+          />
+        }
         renderItem={({ item }) => <TransactionCardList transaction={item} />}
       />
     </SafeAreaView>

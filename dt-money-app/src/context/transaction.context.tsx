@@ -20,6 +20,8 @@ export type TransactionContextType = {
   createTransaction: (transaction: CreateTransactionRequest) => Promise<void>
   fetchTransactions: () => Promise<void>
   updateTransaction: (transaction: UpdateTransactionRequest) => Promise<void>
+  refreshTransactions: () => Promise<void>
+  refreshing: boolean
 }
 
 export const TransactionContext = createContext<TransactionContextType>(
@@ -39,6 +41,8 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     }
   )
 
+  const [refreshing, setRefreshing] = useState(false)
+
   async function fetchCategories() {
     const categoriesResponse =
       await transactionService.getTransactionCategories()
@@ -48,10 +52,26 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
 
   async function createTransaction(transaction: CreateTransactionRequest) {
     await transactionService.createTransaction(transaction)
+
+    await refreshTransactions()
   }
 
   async function updateTransaction(transaction: UpdateTransactionRequest) {
     await transactionService.updateTransaction(transaction)
+
+    await refreshTransactions()
+  }
+
+  async function refreshTransactions() {
+    setRefreshing(true)
+    const transactionsResponse = await transactionService.getTransactions({
+      page: 1,
+      perPage: 10,
+    })
+
+    setTransactions(transactionsResponse.data)
+    setTotalTransactions(transactionsResponse.totalTransactions)
+    setRefreshing(false)
   }
 
   const fetchTransactions = async () => {
@@ -74,6 +94,8 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
         fetchTransactions,
         totalTransactions,
         updateTransaction,
+        refreshTransactions,
+        refreshing,
       }}
     >
       {children}

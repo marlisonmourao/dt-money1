@@ -5,6 +5,8 @@ import { MaterialIcons } from '@expo/vector-icons'
 
 import { Text, View } from 'react-native'
 
+import { moneyMapper } from '@/shared/utils/money-mapper'
+import clsx from 'clsx'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -67,7 +69,10 @@ export function TransactionCard({ type, amount }: TransactionCardProps) {
 
   return (
     <View
-      className={`bg-${cardData.bgColor} mr-6 min-w-[260] justify-between rounded-lg px-8 py-6`}
+      className={clsx(
+        `bg-${cardData.bgColor} mr-6 min-w-[280] justify-between rounded-md px-8 py-6`,
+        type === 'total' && 'mr-12'
+      )}
     >
       <View className="mb-1 flex-row items-center justify-between">
         <Text className="text-base text-white">{cardData.label}</Text>
@@ -80,7 +85,7 @@ export function TransactionCard({ type, amount }: TransactionCardProps) {
 
       <View>
         <Text className="font-bold text-2xl text-gray-400">
-          R$ {amount.toFixed(2).replace('.', ',')}
+          {moneyMapper(amount)}
         </Text>
 
         {type !== 'total' && (

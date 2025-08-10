@@ -1,5 +1,6 @@
 import { TransactionTypes } from '@/shared/enums/transaction-types'
 import type { Transaction } from '@/shared/interfaces/transaction'
+import { moneyMapper } from '@/shared/utils/money-mapper'
 import { colors } from '@/styles/colors'
 import { MaterialIcons } from '@expo/vector-icons'
 import clsx from 'clsx'
@@ -40,7 +41,7 @@ export function TransactionCardList({ transaction }: TransactionCardListProps) {
           })}
         >
           {isExpense && '-'}
-          R$ {transaction.value.toFixed(2).replace('.', ',')}
+          {moneyMapper(transaction.value)}
         </Text>
 
         <View className="w-full flex-row items-center justify-between">
