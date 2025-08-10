@@ -17,10 +17,9 @@ addTokenRequest(dtMoneyApi)
 dtMoneyApi.interceptors.response.use(
   (config) => config,
   (error) => {
-    if (error.response?.data) {
-      const { message } = error.response.data.message
-
-      return Promise.reject(new AppError(message))
+    const apiMessage = error?.response?.data?.message
+    if (typeof apiMessage === 'string') {
+      return Promise.reject(new AppError(apiMessage))
     }
 
     return Promise.reject(new AppError('Erro ao processar a requisição'))

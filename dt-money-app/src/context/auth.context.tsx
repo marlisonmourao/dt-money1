@@ -56,7 +56,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
   }
 
   async function handleLogout() {
-    await AsyncStorage.clear()
+    await AsyncStorage.removeItem('@dtmoney:user')
 
     setUser(null)
     setToken(null)

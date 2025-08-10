@@ -11,26 +11,20 @@ type LoadingProps = {
 }
 
 export function Loading({ setIsLoading }: LoadingProps) {
-  const { restoreUserSession, handleLogout } = useContext(AuthContext)
+  const { restoreUserSession } = useContext(AuthContext)
 
   useEffect(() => {
     const checkUserSession = async () => {
       try {
         setIsLoading(true)
-        const token = await restoreUserSession()
-
-        if (!token) {
-          await handleLogout()
-        }
-      } catch {
-        await handleLogout()
+        await restoreUserSession()
       } finally {
         setIsLoading(false)
       }
     }
 
     checkUserSession()
-  }, [restoreUserSession, handleLogout, setIsLoading])
+  }, [restoreUserSession, setIsLoading])
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-background-primary">
