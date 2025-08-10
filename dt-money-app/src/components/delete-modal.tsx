@@ -64,7 +64,10 @@ export function DeleteModal({
                 </View>
 
                 <View className="w-full flex-row justify-end gap-4 p-6 pr-0 pb-0">
-                  <TouchableOpacity className="w-[100] items-center justify-center rounded-[6] border-2 border-accent-brand bg-none p-3">
+                  <TouchableOpacity
+                    className="w-[100] items-center justify-center rounded-[6] border-2 border-accent-brand bg-none p-3"
+                    onPress={hideModal}
+                  >
                     <Text className="text-accent-brand">Cancelar</Text>
                   </TouchableOpacity>
 
