@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import CurrencyInput from 'react-native-currency-input'
+import { SelectCategoryModal } from './select-category-modal'
 import { TransactionTypeSelector } from './select-type'
 
 export const NewTransaction = () => {
@@ -14,6 +15,7 @@ export const NewTransaction = () => {
     description: '',
     typeId: 0,
     value: 0,
+    categoryId: 0,
   })
 
   const setTransactionData = (
@@ -54,6 +56,14 @@ export const NewTransaction = () => {
           separator=","
           value={transaction.value}
         />
+
+        <SelectCategoryModal
+          onSelectCategory={(categoryId) =>
+            setTransactionData('categoryId', categoryId)
+          }
+          selectedCategory={transaction.categoryId}
+        />
+
         <TransactionTypeSelector
           setTransactionType={(typeId) => setTransactionData('typeId', typeId)}
           typeId={transaction.typeId}
