@@ -9,10 +9,9 @@ import {
 
 import { colors } from '@/styles/colors'
 import BottomSheet, {
+  BottomSheetBackdrop,
   BottomSheetScrollView,
-  TouchableWithoutFeedback,
 } from '@gorhom/bottom-sheet'
-import { View } from 'react-native'
 
 interface BottomSheetContextType {
   openBottomSheet: (content: React.ReactNode, index: number) => void
@@ -27,14 +26,12 @@ export function BottomSheetProvider({ children }: PropsWithChildren) {
   const [content, setContent] = useState<React.ReactNode | null>(null)
   const bottomSheetRef = useRef<BottomSheet>(null)
   const [index, setIndex] = useState(-1)
-  const [isOpen, setIsOpen] = useState(false)
 
   const snapPoints = ['70%', '90%']
 
   const openBottomSheet = useCallback(
     (newContent: React.ReactNode, index: number) => {
       setIndex(index)
-      setIsOpen(true)
 
       requestAnimationFrame(() => {
         bottomSheetRef.current?.snapToIndex(index)
@@ -46,7 +43,6 @@ export function BottomSheetProvider({ children }: PropsWithChildren) {
   )
 
   const closeBottomSheet = useCallback(() => {
-    setIsOpen(false)
     setIndex(-1)
     setContent(null)
     bottomSheetRef.current?.close()
@@ -54,7 +50,6 @@ export function BottomSheetProvider({ children }: PropsWithChildren) {
 
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
-      setIsOpen(false)
       setContent(null)
     }
   }, [])
@@ -68,14 +63,16 @@ export function BottomSheetProvider({ children }: PropsWithChildren) {
     >
       {children}
 
-      {isOpen && (
-        <TouchableWithoutFeedback onPress={closeBottomSheet}>
-          <View className="absolute inset-0 z-10 bg-black/70" />
-        </TouchableWithoutFeedback>
-      )}
-
-      {/* Bottom Sheet */}
       <BottomSheet
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.5}
+            pressBehavior="none"
+          />
+        )}
         backgroundStyle={{
           backgroundColor: colors['background-secondary'],
           borderTopLeftRadius: 32,

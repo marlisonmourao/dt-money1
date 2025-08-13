@@ -1,12 +1,14 @@
 import axios from 'axios'
+import Constants from 'expo-constants'
 import { Platform } from 'react-native'
 import { AppError } from '../helpers/app-error'
 import { addTokenRequest } from '../helpers/axios.helper'
 
-const baseURL = Platform.select({
-  ios: 'http://192.168.0.5:3001',
-  android: 'http://10.0.2.2:3001',
-})
+const extra = (Constants?.expoConfig?.extra ?? {}) as { API_URL?: string }
+
+const baseURL =
+  extra.API_URL ??
+  (Platform.OS === 'ios' ? 'http://192.168.0.2:3001' : 'http://10.0.2.2:3001')
 
 const dtMoneyApi = axios.create({
   baseURL,
