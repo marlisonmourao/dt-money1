@@ -18,6 +18,7 @@ export default function Home() {
     transactions,
     refreshTransactions,
     refreshing,
+    loadingMoreTransaction,
   } = useTransactionContext()
   const { notify } = useSnackbarContext()
 
@@ -36,7 +37,12 @@ export default function Home() {
 
   useEffect(() => {
     ;(async () => {
-      await Promise.all([fetchTransactions(), handleFetchCategories()])
+      await Promise.all([
+        fetchTransactions({
+          page: 1,
+        }),
+        handleFetchCategories(),
+      ])
     })()
   }, [])
 
@@ -51,6 +57,8 @@ export default function Home() {
         data={transactions}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={ListHeader}
+        onEndReached={() => loadingMoreTransaction()}
+        onEndReachedThreshold={0.5}
         refreshControl={
           <RefreshControl
             onRefresh={refreshTransactions}

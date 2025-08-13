@@ -3,6 +3,7 @@ import type { RegisterFormData } from '@/components/register-form'
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type PropsWithChildren,
 } from 'react'
@@ -17,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 type AuthContextType = {
   user: IUser | null
   token: string | null
+  isRestoring: boolean
   handleAuthenticate: (params: LoginFormData) => Promise<void>
   handleRegister: (params: RegisterFormData) => Promise<void>
   handleLogout: () => void
@@ -28,6 +30,7 @@ export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export function AuthContextProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<IUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  const [isRestoring, setIsRestoring] = useState(true)
 
   async function handleAuthenticate(params: LoginFormData) {
     const { user: userData, token: tokenData } =
@@ -83,11 +86,28 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
     }
   }
 
+  useEffect(() => {
+    let isMounted = true
+    ;(async () => {
+      try {
+        await restoreUserSession()
+      } finally {
+        if (isMounted) {
+          setIsRestoring(false)
+        }
+      }
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
+        isRestoring,
         handleAuthenticate,
         handleRegister,
         handleLogout,
