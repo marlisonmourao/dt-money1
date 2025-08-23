@@ -2,6 +2,7 @@ import { useTransactionContext } from '@/context/transaction.context'
 import { TransactionTypes } from '@/shared/enums/transaction-types'
 import { ScrollView, View } from 'react-native'
 import { AppHeader } from './app-header'
+import { FilterInput } from './filter-input'
 import { TransactionCard } from './transaction-card'
 
 export function ListHeader() {
@@ -11,11 +12,9 @@ export function ListHeader() {
     <>
       <AppHeader />
 
-      <View className="h-[150] w-full">
-        <View className="h-[50] bg-background-primary" />
-
+      <View className="w-full">
         <ScrollView
-          className="absolute h-[141]"
+          className="h-[141]"
           horizontal
           showsHorizontalScrollIndicator={false}
         >
@@ -32,6 +31,8 @@ export function ListHeader() {
 
           <TransactionCard amount={totalTransactions.total} type="total" />
         </ScrollView>
+
+        <FilterInput />
       </View>
     </>
   )

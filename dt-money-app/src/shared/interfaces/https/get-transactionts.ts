@@ -7,7 +7,7 @@ export type GetTransactionParams = {
   from?: Date
   to?: Date
   categoryId?: string
-  searchTerm?: string
+  searchText?: string
 }
 
 export interface GetTransactionResponse {
@@ -24,4 +24,11 @@ export interface Pagination {
   perPage: number
   totalRows?: number
   totalPages: number
+}
+
+export interface Filters {
+  from?: Date
+  to?: Date
+  typeId?: number
+  categoryIds?: Record<number, boolean>
 }
