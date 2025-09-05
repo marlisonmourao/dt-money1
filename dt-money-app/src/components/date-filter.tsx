@@ -40,7 +40,7 @@ export const DateFilter = () => {
 
   return (
     <>
-      <Text className="mb-6 text-gray-700 text-lg">Data</Text>
+      <Text className="mb-5 font-medium text-base text-gray-700">Data</Text>
 
       <View className="mb-6 flex-row justify-between">
         <View className="w-[48%]">

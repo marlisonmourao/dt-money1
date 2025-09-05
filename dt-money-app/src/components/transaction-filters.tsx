@@ -2,6 +2,7 @@ import { useBottomSheetContext } from '@/context/bottom-sheet.context'
 import { colors } from '@/styles/colors'
 import { MaterialIcons } from '@expo/vector-icons'
 import { Text, TouchableOpacity, View } from 'react-native'
+import { CategoryFilter } from './category-fillter'
 import { DateFilter } from './date-filter'
 
 export function TransactionFilters() {
@@ -20,6 +21,8 @@ export function TransactionFilters() {
       </View>
 
       <DateFilter />
+
+      <CategoryFilter />
     </View>
   )
 }
