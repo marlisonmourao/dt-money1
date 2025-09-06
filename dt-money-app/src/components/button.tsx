@@ -13,12 +13,15 @@ type ButtonMode = 'fill' | 'outline'
 type ButtonProps = TouchableOpacityProps & {
   mode?: ButtonMode
   iconName?: keyof typeof MaterialIcons.glyphMap
+  widthFull?: boolean
 }
 
 export function Button({
   mode = 'fill',
   iconName,
   children,
+  className,
+  widthFull = true,
   ...props
 }: PropsWithChildren<ButtonProps>) {
   const isFill = mode === 'fill'
@@ -26,12 +29,14 @@ export function Button({
   return (
     <TouchableOpacity
       className={clsx(
-        'h-button w-full flex-row items-center rounded-xl px-5',
+        'h-button flex-row items-center rounded-xl px-5',
+        widthFull && 'w-full',
         iconName ? 'justify-between' : 'justify-center',
         {
           'bg-accent-brand': isFill,
           'border-[1px] border-accent-brand bg-none': !isFill,
-        }
+        },
+        className
       )}
       {...props}
     >

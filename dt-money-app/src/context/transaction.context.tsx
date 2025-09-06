@@ -3,6 +3,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useMemo,
   useState,
   type PropsWithChildren,
 } from 'react'
@@ -56,6 +57,7 @@ export type TransactionContextType = {
   filters: Filters
   handleFilters: (params: HandleFiltersParams) => void
   handleCategoryFilters: (categoryId: number) => void
+  resetFilters: () => void
 }
 
 export const TransactionContext = createContext<TransactionContextType>(
@@ -95,6 +97,14 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     totalPages: 0,
   })
 
+  const categoryIds = useMemo(
+    () =>
+      Object.entries(filters.categoryIds ?? {})
+        .filter(([_, value]) => value)
+        .map(([key]) => Number(key)),
+    [filters.categoryIds]
+  )
+
   async function fetchCategories() {
     const categoriesResponse =
       await transactionService.getTransactionCategories()
@@ -120,6 +130,8 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     const transactionsResponse = await transactionService.getTransactions({
       page: 1,
       perPage: page * perPage,
+      ...filters,
+      categoryIds,
     })
 
     setTransactions(transactionsResponse.data)
@@ -131,7 +143,7 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
       totalPages: transactionsResponse.totalPages,
       totalRows: transactionsResponse.totalRows,
     })
-  }, [pagination])
+  }, [pagination, categoryIds, filters])
 
   const fetchTransactions = useCallback(
     async ({ page }: FetchTransactionParams) => {
@@ -139,6 +151,8 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
         page,
         perPage: pagination.perPage,
         searchText,
+        ...filters,
+        categoryIds,
       })
 
       if (page === 1) {
@@ -159,7 +173,7 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
         totalPages: transactionsResponse.totalPages,
       })
     },
-    [pagination, searchText]
+    [pagination, searchText, filters, categoryIds]
   )
 
   function handleLoadings(params: HandleLoadingsParams) {
@@ -194,6 +208,31 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
     }))
   }
 
+  const resetFilters = async () => {
+    setFilters({
+      typeId: undefined,
+      categoryIds: {},
+      from: undefined,
+      to: undefined,
+    })
+    setSearchText('')
+
+    const transactionsResponse = await transactionService.getTransactions({
+      page: 1,
+      perPage: pagination.perPage,
+      searchText: '',
+      categoryIds: [],
+    })
+
+    setTransactions(transactionsResponse.data)
+    setTotalTransactions(transactionsResponse.totalTransactions)
+    setPagination({
+      ...pagination,
+      page: 1,
+      totalRows: transactionsResponse.totalRows,
+    })
+  }
+
   return (
     <TransactionContext.Provider
       value={{
@@ -214,6 +253,7 @@ export function TransactionContextProvider({ children }: PropsWithChildren) {
         filters,
         handleFilters,
         handleCategoryFilters,
+        resetFilters,
       }}
     >
       {children}

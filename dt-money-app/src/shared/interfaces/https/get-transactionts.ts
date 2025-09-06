@@ -6,7 +6,7 @@ export type GetTransactionParams = {
   perPage: number
   from?: Date
   to?: Date
-  categoryId?: string
+  categoryIds?: number[]
   searchText?: string
 }
 

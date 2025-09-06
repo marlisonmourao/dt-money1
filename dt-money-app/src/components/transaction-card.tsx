@@ -115,7 +115,7 @@ export function TransactionCard({ type, amount }: TransactionCardProps) {
       </View>
 
       <View>
-        <Text className="font-bold text-2xl text-gray-400">
+        <Text className="font-bold text-gray-400 text-xl">
           {moneyMapper(amount)}
         </Text>
 
